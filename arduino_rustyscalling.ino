@@ -46,19 +46,23 @@ void setup() {
 
   num_files = sfx.listFiles();
   playlist = (uint8_t *) malloc(sizeof(uint8_t) * num_files);
-  // Start with the playlist in order
-  for (int i = 0; i < num_files; i++) playlist[i] = i;
-  init_playlist();
   track_i = 0;
 
+  // Initialize playlist
+  for (int i = 0; i < num_files; i++) playlist[i] = i;
+  shuffle_playlist();
+  
   pinMode(HOOK_SW, INPUT_PULLUP);
   pinMode(SFX_ACT, INPUT_PULLUP);
 }
 
-void init_playlist() {
+void shuffle_playlist() {
   // Fisher-yates and Durstenfeld with the good shuffle
+  // for i from n−1 down to 1 do
   for (int i = num_files - 1; i > 0; i--) {
-    int j = random(i+1); // int 0 <= j <= i
+    // j gets random integer such that 0 <= j <= i
+    int j = random(i+1); 
+    // exchange [j] and [i]
     uint8_t tmp = playlist[i];
     playlist[i] = playlist[j];
     playlist[j] = tmp;
@@ -86,6 +90,6 @@ void loop() {
   // Reshuffle the playlist once we get to the end
   if (track_i >= num_files) {
     track_i = 0;
-    init_playlist();
+    shuffle_playlist();
   }
 }
